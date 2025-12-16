@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t gitops-apache:latest .'
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                sh '''
+                docker rm -f gitops-apache || true
+                docker run -d -p 8080:80 --name gitops-apache gitops-apache:latest
+                '''
+            }
+        }
+    }
+}
+
